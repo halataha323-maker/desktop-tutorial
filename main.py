@@ -50,7 +50,7 @@ def fetch_recent_emails(gmail_service):
     return email_list
 
 def analyze_email_with_llm(email_content: str) -> dict | None:
-    """סימולציית ישויות פגישה מובנות עבור הודעות שסוננו על ידי גוגל"""
+
     return {
         "is_meeting": True,
         "title": "פגישת עבודה על פרויקטון סיום",
