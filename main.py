@@ -51,7 +51,6 @@ def fetch_recent_emails(gmail_service):
 
 def analyze_email_with_llm(email_content: str) -> dict | None:
     """סימולציית ישויות פגישה מובנות עבור הודעות שסוננו על ידי גוגל"""
-    # מאחר וגוגל כבר סינן רק מיילים רלוונטיים, נחזיר ישירות את פרטי הפגישה לקביעה
     return {
         "is_meeting": True,
         "title": "פגישת עבודה על פרויקטון סיום",
@@ -85,8 +84,8 @@ def create_calendar_event(calendar_service, meeting_info: dict):
     event = {
         'summary': meeting_info['title'],
         'location': meeting_info['location'],
-        'start': {'dateTime': start_time.isoformat(), 'timeZone': 'Israel'},
-        'end': {'dateTime': end_time.isoformat(), 'timeZone': 'Israel'},
+        'start': {'dateTime': start_time.isoformat(), 'timeZone': 'Asia/Jerusalem'},
+        'end': {'dateTime': end_time.isoformat(), 'timeZone': 'Asia/Jerusalem'},
     }
     calendar_service.events().insert(calendarId='primary', body=event).execute()
     print(f"🎉 אירוע נקבע בהצלחה בלוח השנה: {meeting_info['title']}")
@@ -106,6 +105,13 @@ def main():
     creds = get_credentials()
     gmail_service = build("gmail", "v1", credentials=creds)
     calendar_service = build("calendar", "v3", credentials=creds)
+    
+    # 🔍 בדיקת החשבון המחובר האמיתי:
+    try:
+        primary_cal = calendar_service.calendars().get(calendarId='primary').execute()
+        print(f"📧 [אבחון] הסוכן מחובר כרגע לחשבון גוגל: {primary_cal['id']}")
+    except Exception:
+        print("📧 [אבחון] לא הצלחתי לשלוף את כתובת המייל, ממשיך כרגיל...")
     
     print("🤖 סוכן ה-AI מתחיל בסריקת הודעות...")
     emails = fetch_recent_emails(gmail_service)
